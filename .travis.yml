@@ -1,0 +1,49 @@
+language: node_js
+node_js:
+  - "6.11"
+
+branches:
+  only:
+    - master
+    - develop
+
+sudo: required  
+dist: trusty  
+
+addons:
+apt:
+  sources:
+    - google-chrome
+  packages:
+    - google-chrome-stable
+    - google-chrome-beta
+
+#
+# Build Lifecycle:
+#
+    
+before_install:
+#  - "curl -sSL https://github.com/goodeggs/travis-utils/raw/master/chrome.sh | sh"
+  - sh /etc/init.d/xvfb start || true
+  - sudo apt-get install -y libappindicator1 fonts-liberation
+  - wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+  - sudo dpkg -i google-chrome*.deb
+  - node -v
+  - npm -v
+  - npm install -g cordova@6.5.0 ionic@3.4.0
+
+install:
+  - npm install
+  
+script:
+  - npm run ionic:build
+
+env:
+  CHROME_BIN=chromium-browser
+  DISPLAY=:99.0
+
+notifications:
+  email:
+    recipients:
+    on_success: change
+on_failure: always
